@@ -19,6 +19,8 @@ import {
 } from 'lucide-react';
 
 export default function Home() {
+  const [selectedProject, setSelectedProject] = useState<any | null>(null);
+
   const [activeSection, setActiveSection] = useState('hero');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -174,55 +176,104 @@ export default function Home() {
       </div>
     );
   };
+  const ProjectModal = ({ project, onClose }: { project: any; onClose: () => void }) => {
+  if (!project) return null;
 
-  const ProjectCard = ({ project, index }: { project: any, index: number }) => {
-    return (
-      <div className={`group p-6 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 hover:border-blue-500/50 transition-all duration-300 hover:transform hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/20 animate-slide-up`}
-           style={{ animationDelay: `${index * 0.1}s` }}>
-        <div className="flex items-start justify-between mb-4">
-          <div className="p-3 bg-gradient-to-br from-blue-500/20 to-purple-600/20 rounded-lg group-hover:from-blue-500/30 group-hover:to-purple-600/30 transition-all duration-300">
-            <Code2 className="w-6 h-6 text-blue-400" />
-          </div>
-          <ExternalLink className="w-5 h-5 text-gray-400 group-hover:text-blue-400 transition-colors duration-300 opacity-0 group-hover:opacity-100" />
-        </div>
-        <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors duration-300">
-          {project.title}
-        </h3>
-        <p className="text-gray-300 mb-4 leading-relaxed">{project.description}</p>
-        <div className="flex flex-wrap gap-2">
-          {project.technologies.map((tech: string, techIndex: number) => (
+  return (
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="bg-gray-900 p-8 rounded-2xl max-w-2xl w-full relative">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-400 hover:text-white"
+        >
+          ✕
+        </button>
+        <h2 className="text-3xl font-bold text-white mb-4">{project.title}</h2>
+        <p className="text-gray-300 mb-6">{project.details}</p>
+        <div className="flex flex-wrap gap-2 mb-6">
+          {project.technologies.map((tech: string, i: number) => (
             <span
-              key={techIndex}
-              className="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm border border-blue-500/30 hover:bg-blue-500/30 transition-all duration-300"
+              key={i}
+              className="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm border border-blue-500/30"
             >
               {tech}
             </span>
           ))}
         </div>
+        <a
+          href={project.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block px-6 py-3 bg-blue-600 rounded-lg text-white font-medium hover:bg-blue-700 transition-all"
+        >
+          View Project
+        </a>
       </div>
-    );
-  };
+    </div>
+  );
+};
+
+  const ProjectCard = ({ project, index }: { project: any; index: number }) => {
+  return (
+    <div
+      className="group p-6 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 hover:border-blue-500/50 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/20 animate-slide-up cursor-pointer"
+      style={{ animationDelay: `${index * 0.1}s` }}
+      onClick={() => setSelectedProject(project)}
+    >
+      <div className="flex items-start justify-between mb-4">
+        <div className="p-3 bg-gradient-to-br from-blue-500/20 to-purple-600/20 rounded-lg">
+          <Code2 className="w-6 h-6 text-blue-400" />
+        </div>
+        <a
+          href={project.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()} // prevent opening modal on link click
+        >
+          <ExternalLink className="w-5 h-5 text-gray-400 hover:text-blue-400 transition-colors duration-300" />
+        </a>
+      </div>
+      <h3 className="text-xl font-bold text-white mb-2">{project.title}</h3>
+      <p className="text-gray-300 mb-4">{project.description}</p>
+      <div className="flex flex-wrap gap-2">
+        {project.technologies.map((tech: string, i: number) => (
+          <span
+            key={i}
+            className="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm border border-blue-500/30"
+          >
+            {tech}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 
   const projects = [
     {
       title: "Blog Web App",
       description: "Full-stack CRUD blog with secure authentication. REST APIs for seamless frontend-backend communication.",
-      technologies: ["MERN", "Firebase", "REST API", "Authentication"]
+      technologies: ["MERN", "Firebase", "REST API", "Authentication"],
+      link: "https://github.com/RUTHVIKMATURU/blogApp",
     },
     {
       title: "Campus Career Connect",
       description: "Networking platform with real-time chat, event updates, and role-based access.",
-      technologies: ["MERN", "Firebase", "Real-time Chat", "Role-based Access"]
+      technologies: ["MERN", "Firebase", "Real-time Chat", "Role-based Access"],
+      link: "https://github.com/RUTHVIKMATURU/campus-connect",
     },
     {
       title: "Hostel Management System",
       description: "CRUD-based hostel records and fee tracking with admin dashboard.",
-      technologies: ["MERN", "CRUD", "Admin Dashboard", "Fee Management"]
+      technologies: ["MERN", "CRUD", "Admin Dashboard", "Fee Management"],
+      link: "https://github.com/RUTHVIKMATURU/hostel-management-system",
     },
     {
       title: "Event Management System",
       description: "Event scheduling, registration, and participant management with role-based access.",
-      technologies: ["MERN", "Event Scheduling", "Registration", "Role Management"]
+      technologies: ["MERN", "Event Scheduling", "Registration", "Role Management"],
+      link: "https://github.com/RUTHVIKMATURU/eventApp",
     },
     {
       title: "Movies DBMS",
@@ -554,12 +605,13 @@ export default function Home() {
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
-              { title: "Smart Interviews Leaderboard", position: "1st Place", points: "84,000 points", institute: "VNRVJIET" },
+              { title: "Smart Interviews Leaderboard", position: "1st Place", points: "92,000 points", institute: "VNRVJIET" },
               { title: "Top 100 Coders", position: "27th Position", detail: "1st Year", color: "from-yellow-400 to-orange-500" },
               { title: "Turing Cup 2025", position: "12th Position", color: "from-blue-400 to-purple-500" },
               { title: "Codenox 2.0", position: "10th Position", detail: "1st Year", color: "from-green-400 to-blue-500" },
-              { title: "Coding Profiles", detail: "Codeforces: 1272 | CodeChef: 1607", color: "from-purple-400 to-pink-500" },
-              { title: "Hackathon Participation", detail: "SIH, Webathon, Ideathon, VJ Hackathon", color: "from-pink-400 to-red-500" }
+              { title: "Coding Profiles", detail: "Codeforces: 1219 CodeChef: 1660 leetcode: 1717", color: "from-purple-400 to-pink-500" },
+              { title: "Hackathon Participation", detail: "SIH, Webathon, Ideathon, VJ Hackathon", color: "from-pink-400 to-red-500" },
+              { title: "DQ-Code Quest", position: "5th Position", detail: "3rd Year", color: "from-blue-400 to-red-500" }
             ].map((achievement, index) => (
               <div
                 key={index}
@@ -648,9 +700,9 @@ export default function Home() {
                 <h3 className="text-xl font-bold text-white mb-6">Coding Profiles</h3>
                 <div className="space-y-4">
                   {[
-                    { name: "Codeforces", rating: "1272", link: "https://codeforces.com/profile/RUTHVIK0811" },
-                    { name: "CodeChef", rating: "1607", link: "https://www.codechef.com/users/ruthvik0811" },
-                    { name: "LeetCode", rating: "1683", link: "https://leetcode.com/u/ruthvik0811/" },
+                    { name: "Codeforces", rating: "1207", link: "https://codeforces.com/profile/RUTHVIK0811" },
+                    { name: "CodeChef", rating: "1660", link: "https://www.codechef.com/users/ruthvik0811" },
+                    { name: "LeetCode", rating: "1717", link: "https://leetcode.com/u/ruthvik0811/" },
                     { name: "HackerRank", rating: "★★★★★", link: "https://www.hackerrank.com/profile/ruthvik0811" }
                   ].map((profile, index) => (
                     <a
@@ -746,6 +798,10 @@ export default function Home() {
           opacity: 0;
         }
       `}</style>
+    {selectedProject && (
+      <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />
+    )}
+
     </div>
   );
 }
